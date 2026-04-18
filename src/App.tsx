@@ -1,8 +1,22 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import {
+  Beer,
+  CreditCard,
+  Fish,
+  GlassWater,
+  MapPin,
+  Martini,
+  Phone,
+  Sandwich,
+  Shell,
+  Shrimp,
+  Sunrise,
+  Waves,
+} from "lucide-react";
 
 type Item = { nome: string; preco: number; obs?: string };
 type Categoria = { titulo: string; emoji: string; subtitulo?: string; itens: Item[] };
-type Secao = { id: string; titulo: string; cor: string; categorias: Categoria[] };
+type Secao = { id: string; titulo: string; destaque: string; icon: typeof Fish; categorias: Categoria[] };
 
 const formatBRL = (v: number) =>
   v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -11,7 +25,8 @@ const secoes: Secao[] = [
   {
     id: "do-mar",
     titulo: "Do Mar",
-    cor: "from-cyan-600 to-blue-700",
+    destaque: "Receitas frescas com sabor de litoral",
+    icon: Fish,
     categorias: [
       {
         titulo: "Peixes & Frutos do Mar",
@@ -46,7 +61,8 @@ const secoes: Secao[] = [
   {
     id: "da-terra",
     titulo: "Da Terra",
-    cor: "from-amber-600 to-orange-700",
+    destaque: "Pratos quentes e porções para dividir",
+    icon: Shell,
     categorias: [
       {
         titulo: "Pratos & Combos",
@@ -79,7 +95,8 @@ const secoes: Secao[] = [
   {
     id: "lanches",
     titulo: "Lanches",
-    cor: "from-rose-600 to-red-700",
+    destaque: "Pedidos rápidos com cara de verão",
+    icon: Sandwich,
     categorias: [
       {
         titulo: "Sanduíches da Areia",
@@ -108,7 +125,8 @@ const secoes: Secao[] = [
   {
     id: "bebidas",
     titulo: "Bebidas",
-    cor: "from-sky-500 to-cyan-600",
+    destaque: "Sucos, refrigerantes e refrescos gelados",
+    icon: GlassWater,
     categorias: [
       {
         titulo: "Sem Álcool",
@@ -126,7 +144,7 @@ const secoes: Secao[] = [
       {
         titulo: "Sucos Naturais",
         emoji: "🧃",
-        subtitulo: "Sabores: abacaxi, maracujá, acerola, manga, morango, caju",
+        subtitulo: "Sabores: abacaxi, maracujá, acerola, manga, morango e caju",
         itens: [
           { nome: "Suco com Água (500ml)", preco: 10.0 },
           { nome: "Suco com Leite (500ml)", preco: 12.0 },
@@ -140,7 +158,8 @@ const secoes: Secao[] = [
   {
     id: "cervejas",
     titulo: "Cervejas & Doses",
-    cor: "from-yellow-500 to-amber-600",
+    destaque: "Clássicos para brindar à beira-mar",
+    icon: Beer,
     categorias: [
       {
         titulo: "Cervejas Geladas",
@@ -178,12 +197,13 @@ const secoes: Secao[] = [
   {
     id: "drinks",
     titulo: "Drinks",
-    cor: "from-pink-500 to-rose-600",
+    destaque: "Misturas tropicais para fechar o dia",
+    icon: Martini,
     categorias: [
       {
         titulo: "Caipirinhas (500ml)",
         emoji: "🍹",
-        subtitulo: "Frutas: limão, morango, abacaxi, kiwi, maracujá, frutas vermelhas",
+        subtitulo: "Frutas: limão, morango, abacaxi, kiwi, maracujá e frutas vermelhas",
         itens: [
           { nome: "Caipirinha de Cachaça", preco: 16.0 },
           { nome: "Caipiroska de Vodka", preco: 19.0 },
@@ -221,7 +241,8 @@ const secoes: Secao[] = [
   {
     id: "sobremesas",
     titulo: "Sobremesas",
-    cor: "from-fuchsia-500 to-purple-600",
+    destaque: "Final doce com clima de férias",
+    icon: Sunrise,
     categorias: [
       {
         titulo: "Para Adoçar o Dia",
@@ -239,105 +260,174 @@ const secoes: Secao[] = [
   },
 ];
 
+const destaques = [
+  { label: "Atendimento", value: "na areia" },
+  { label: "Pedido médio", value: "10 min" },
+  { label: "Pagamento", value: "PIX e cartão" },
+];
+
 function App() {
   const [secaoAtiva, setSecaoAtiva] = useState(secoes[0].id);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 80);
+    const onScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   const secao = secoes.find((s) => s.id === secaoAtiva)!;
+  const IconeSecao = secao.icon;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-300 via-sky-100 to-amber-100">
-      {/* Header */}
-      <header className="relative overflow-hidden bg-gradient-to-br from-sky-500 via-cyan-500 to-teal-500 text-white shadow-xl">
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-4 left-8 text-6xl">🌴</div>
-          <div className="absolute top-10 right-10 text-5xl">☀️</div>
-          <div className="absolute bottom-4 left-1/4 text-4xl">🐚</div>
-          <div className="absolute bottom-6 right-1/3 text-4xl">⛱️</div>
-        </div>
-        <div className="relative max-w-5xl mx-auto px-4 py-10 text-center">
-          <div className="inline-block bg-white/20 backdrop-blur-sm px-4 py-1 rounded-full text-xs font-semibold tracking-widest uppercase mb-3">
-            Quiosque na Beira do Mar
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(186,230,253,0.85),transparent_35%),linear-gradient(180deg,#fff9ef_0%,#e0f2fe_35%,#fff4de_100%)] text-slate-900">
+      <header className="relative overflow-hidden border-b border-white/40 bg-[linear-gradient(135deg,#0f766e_0%,#0891b2_42%,#f59e0b_100%)] text-white shadow-[0_20px_60px_rgba(8,47,73,0.25)]">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.22),transparent_24%),radial-gradient(circle_at_85%_15%,rgba(253,224,71,0.35),transparent_18%),linear-gradient(180deg,transparent,rgba(255,255,255,0.04))]" />
+        <div className="absolute -bottom-16 left-0 right-0 h-40 bg-[radial-gradient(circle_at_20%_0%,rgba(255,255,255,0.25),transparent_36%),radial-gradient(circle_at_70%_20%,rgba(255,255,255,0.16),transparent_28%)]" />
+
+        <div className="relative mx-auto max-w-6xl px-4 pb-10 pt-6 sm:px-6 lg:px-8">
+          <div className="mb-10 flex flex-wrap items-center justify-between gap-3 text-sm">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/12 px-4 py-2 backdrop-blur-md">
+              <Waves className="h-4 w-4" />
+              <span>Quiosque na beira do mar</span>
+            </div>
+            <div className="flex flex-wrap gap-2 text-white/90">
+              <span className="rounded-full border border-white/15 bg-slate-950/15 px-3 py-1.5">Aberto das 9h às 19h</span>
+              <span className="rounded-full border border-white/15 bg-slate-950/15 px-3 py-1.5">Praia Grande, Posto 6</span>
+            </div>
           </div>
-          <h1 className="text-5xl md:text-6xl font-black drop-shadow-lg mb-2" style={{ fontFamily: "'Pacifico', cursive" }}>
-            Maré Cheia
-          </h1>
-          <p className="text-lg md:text-xl font-light opacity-95">
-            Sabores do litoral com o pé na areia 🏖️
-          </p>
-          <div className="mt-4 flex flex-wrap justify-center gap-3 text-sm">
-            <span className="bg-white/25 px-3 py-1 rounded-full backdrop-blur-sm">⏰ Aberto 9h às 19h</span>
-            <span className="bg-white/25 px-3 py-1 rounded-full backdrop-blur-sm">📍 Posto 6 — Praia Grande</span>
+
+          <div className="grid items-end gap-8 lg:grid-cols-[1.3fr_0.7fr]">
+            <div className="max-w-3xl">
+              <p className="mb-3 text-sm font-semibold uppercase tracking-[0.35em] text-amber-100/90">
+                Cardápio tropical
+              </p>
+              <h1
+                className="text-5xl leading-none sm:text-6xl lg:text-7xl"
+                style={{ fontFamily: "'Pacifico', cursive" }}
+              >
+                Maré Cheia
+              </h1>
+              <p className="mt-5 max-w-2xl text-base leading-7 text-cyan-50 sm:text-lg">
+                Um cardápio feito para dias de sol: frutos do mar, porções generosas,
+                drinks gelados e um visual mais limpo para o cliente encontrar tudo rápido.
+              </p>
+            </div>
+
+            <div className="grid gap-3 rounded-[2rem] border border-white/15 bg-slate-950/15 p-5 backdrop-blur-md">
+              {destaques.map((item) => (
+                <div
+                  key={item.label}
+                  className="flex items-center justify-between rounded-2xl bg-white/10 px-4 py-3"
+                >
+                  <span className="text-sm text-cyan-50/80">{item.label}</span>
+                  <strong className="text-sm font-semibold text-white">{item.value}</strong>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </header>
 
-      {/* Navegação fixa */}
       <nav
-        className={`sticky top-0 z-30 transition-all ${
-          scrolled ? "bg-white/95 shadow-lg backdrop-blur-md" : "bg-white/80 backdrop-blur-sm"
+        className={`sticky top-0 z-30 border-b border-slate-200/70 transition-all ${
+          scrolled
+            ? "bg-white/88 shadow-[0_12px_30px_rgba(15,23,42,0.12)] backdrop-blur-xl"
+            : "bg-white/72 backdrop-blur-md"
         }`}
       >
-        <div className="max-w-5xl mx-auto px-2 py-3 flex gap-2 overflow-x-auto scrollbar-hide">
-          {secoes.map((s) => (
-            <button
-              key={s.id}
-              onClick={() => setSecaoAtiva(s.id)}
-              className={`px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all ${
-                secaoAtiva === s.id
-                  ? `bg-gradient-to-r ${s.cor} text-white shadow-md scale-105`
-                  : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-              }`}
-            >
-              {s.titulo}
-            </button>
-          ))}
+        <div className="mx-auto flex max-w-6xl gap-3 overflow-x-auto px-4 py-4 sm:px-6 lg:px-8">
+          {secoes.map((s) => {
+            const Icone = s.icon;
+            const ativo = secaoAtiva === s.id;
+
+            return (
+              <button
+                key={s.id}
+                onClick={() => setSecaoAtiva(s.id)}
+                className={`flex shrink-0 items-center gap-2 rounded-full border px-4 py-2.5 text-sm font-semibold transition ${
+                  ativo
+                    ? "border-teal-600 bg-teal-700 text-white shadow-lg shadow-teal-900/15"
+                    : "border-slate-200 bg-white/90 text-slate-700 hover:border-cyan-300 hover:bg-cyan-50"
+                }`}
+              >
+                <Icone className="h-4 w-4" />
+                <span>{s.titulo}</span>
+              </button>
+            );
+          })}
         </div>
       </nav>
 
-      {/* Conteúdo */}
-      <main className="max-w-5xl mx-auto px-4 py-8">
-        <div
-          className={`bg-gradient-to-r ${secao.cor} text-white rounded-2xl px-6 py-5 shadow-lg mb-6`}
-        >
-          <h2 className="text-3xl font-black tracking-tight">{secao.titulo}</h2>
-          <p className="opacity-90 text-sm mt-1">Cardápio · valores em Reais (R$)</p>
-        </div>
+      <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+        <section className="mb-8 grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
+          <div className="overflow-hidden rounded-[2rem] border border-cyan-200/50 bg-[linear-gradient(135deg,#0f766e_0%,#155e75_45%,#082f49_100%)] p-6 text-white shadow-[0_20px_50px_rgba(8,47,73,0.18)] sm:p-8">
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm text-cyan-50">
+              <IconeSecao className="h-4 w-4" />
+              <span>{secao.titulo}</span>
+            </div>
+            <h2 className="text-3xl font-black tracking-tight sm:text-4xl">{secao.titulo}</h2>
+            <p className="mt-3 max-w-xl text-sm leading-6 text-cyan-50/90 sm:text-base">
+              {secao.destaque}. Valores em reais e seleção pensada para servir rápido sem perder presença.
+            </p>
+          </div>
+
+          <div className="grid gap-4 rounded-[2rem] border border-amber-200 bg-white/80 p-5 shadow-[0_14px_35px_rgba(148,163,184,0.14)] backdrop-blur-md">
+            <div className="flex items-center gap-3 rounded-2xl bg-amber-50 px-4 py-3 text-amber-900">
+              <Shrimp className="h-5 w-5" />
+              <div>
+                <p className="text-sm font-semibold">Pedido com cara de verão</p>
+                <p className="text-xs text-amber-800/80">Porções, pratos e bebidas organizados por seção</p>
+              </div>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="rounded-2xl bg-slate-50 px-4 py-4">
+                <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Categorias</p>
+                <p className="mt-2 text-2xl font-black text-slate-900">{secao.categorias.length}</p>
+              </div>
+              <div className="rounded-2xl bg-slate-50 px-4 py-4">
+                <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Itens na seção</p>
+                <p className="mt-2 text-2xl font-black text-slate-900">
+                  {secao.categorias.reduce((acc, categoria) => acc + categoria.itens.length, 0)}
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
 
         <div className="grid gap-6">
           {secao.categorias.map((cat) => (
             <section
               key={cat.titulo}
-              className="bg-white rounded-2xl shadow-md overflow-hidden border border-slate-100"
+              className="overflow-hidden rounded-[2rem] border border-white/70 bg-white/88 shadow-[0_16px_40px_rgba(148,163,184,0.14)] backdrop-blur-md"
             >
-              <div className="bg-gradient-to-r from-slate-50 to-slate-100 px-5 py-4 border-b border-slate-200">
-                <h3 className="text-xl font-extrabold text-slate-800 flex items-center gap-2">
-                  <span className="text-2xl">{cat.emoji}</span>
-                  {cat.titulo}
-                </h3>
-                {cat.subtitulo && (
-                  <p className="text-xs text-slate-600 mt-1 italic">{cat.subtitulo}</p>
-                )}
+              <div className="border-b border-slate-200/70 bg-[linear-gradient(180deg,#f8fafc_0%,#eefcf9_100%)] px-5 py-5 sm:px-6">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <h3 className="flex items-center gap-3 text-xl font-black text-slate-900 sm:text-2xl">
+                      <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white text-2xl shadow-sm">
+                        {cat.emoji}
+                      </span>
+                      <span>{cat.titulo}</span>
+                    </h3>
+                    {cat.subtitulo && (
+                      <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">{cat.subtitulo}</p>
+                    )}
+                  </div>
+                </div>
               </div>
-              <ul className="divide-y divide-slate-100">
+
+              <ul className="grid gap-3 p-4 sm:p-5">
                 {cat.itens.map((it) => (
                   <li
                     key={it.nome}
-                    className="flex items-start justify-between gap-4 px-5 py-3 hover:bg-amber-50/50 transition"
+                    className="flex flex-col gap-3 rounded-2xl border border-slate-100 bg-white px-4 py-4 shadow-sm transition hover:-translate-y-0.5 hover:border-amber-200 hover:bg-amber-50/40 sm:flex-row sm:items-start sm:justify-between"
                   >
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-slate-800 leading-snug">{it.nome}</p>
-                      {it.obs && (
-                        <p className="text-xs text-slate-500 mt-0.5">{it.obs}</p>
-                      )}
+                    <div className="min-w-0 flex-1">
+                      <p className="text-base font-semibold leading-6 text-slate-900">{it.nome}</p>
+                      {it.obs && <p className="mt-1 text-sm leading-5 text-slate-500">{it.obs}</p>}
                     </div>
-                    <span className="font-black text-slate-900 whitespace-nowrap bg-amber-100 px-3 py-1 rounded-lg text-sm">
+                    <span className="inline-flex shrink-0 items-center justify-center rounded-full bg-slate-900 px-4 py-2 text-sm font-bold text-white">
                       {formatBRL(it.preco)}
                     </span>
                   </li>
@@ -347,36 +437,46 @@ function App() {
           ))}
         </div>
 
-        {/* Dicas / observações */}
-        <div className="mt-8 bg-gradient-to-br from-amber-100 to-orange-100 border-l-4 border-orange-500 rounded-xl p-5 text-sm text-slate-700">
-          <p className="font-bold text-orange-700 mb-1">🌞 Boas-vindas ao Maré Cheia!</p>
-          <p>
-            Atendimento direto na sua cadeira de praia. Pague em dinheiro, cartão ou PIX.
-            Os preços podem variar em datas especiais. Consumir bebidas alcoólicas com moderação.
+        <section className="mt-8 rounded-[2rem] border border-amber-200/80 bg-[linear-gradient(135deg,#fff7db_0%,#ffedd5_100%)] p-6 shadow-[0_16px_40px_rgba(251,191,36,0.14)]">
+          <p className="text-sm font-black uppercase tracking-[0.22em] text-orange-700">Boas-vindas ao Maré Cheia</p>
+          <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-700 sm:text-base">
+            Atendimento direto na cadeira de praia. Aceitamos dinheiro, cartão e PIX.
+            Os preços podem variar em datas especiais, e bebidas alcoólicas devem ser consumidas com moderação.
           </p>
-        </div>
+        </section>
       </main>
 
-      {/* Rodapé */}
-      <footer className="bg-gradient-to-br from-slate-800 to-slate-900 text-white mt-10">
-        <div className="max-w-5xl mx-auto px-4 py-8 grid sm:grid-cols-3 gap-6 text-sm">
-          <div>
-            <h4 className="font-bold text-amber-300 mb-2">💳 Formas de Pagamento</h4>
-            <p className="opacity-80">Dinheiro · Débito · Crédito · PIX · VR/VA</p>
+      <footer className="mt-10 bg-[linear-gradient(180deg,#082f49_0%,#0f172a_100%)] text-white">
+        <div className="mx-auto grid max-w-6xl gap-4 px-4 py-8 sm:px-6 lg:grid-cols-3 lg:px-8">
+          <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5">
+            <div className="mb-3 flex items-center gap-2 text-amber-300">
+              <CreditCard className="h-4 w-4" />
+              <h4 className="text-sm font-bold uppercase tracking-[0.2em]">Pagamento</h4>
+            </div>
+            <p className="text-sm text-slate-200">Dinheiro, débito, crédito, PIX e VR/VA.</p>
           </div>
-          <div>
-            <h4 className="font-bold text-amber-300 mb-2">📱 PIX & Contato</h4>
-            <p className="opacity-80">Chave PIX: (13) 99876-5432</p>
-            <p className="opacity-80">WhatsApp: (13) 99876-5432</p>
+
+          <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5">
+            <div className="mb-3 flex items-center gap-2 text-amber-300">
+              <Phone className="h-4 w-4" />
+              <h4 className="text-sm font-bold uppercase tracking-[0.2em]">PIX & Contato</h4>
+            </div>
+            <p className="text-sm text-slate-200">Chave PIX: (13) 99876-5432</p>
+            <p className="mt-1 text-sm text-slate-300">WhatsApp: (13) 99876-5432</p>
           </div>
-          <div>
-            <h4 className="font-bold text-amber-300 mb-2">🌊 Maré Cheia</h4>
-            <p className="opacity-80">Quiosque familiar desde 2008.</p>
-            <p className="opacity-60 text-xs mt-2">Cardápio meramente ilustrativo.</p>
+
+          <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5">
+            <div className="mb-3 flex items-center gap-2 text-amber-300">
+              <MapPin className="h-4 w-4" />
+              <h4 className="text-sm font-bold uppercase tracking-[0.2em]">Endereço</h4>
+            </div>
+            <p className="text-sm text-slate-200">Quiosque familiar desde 2008, no Posto 6 da Praia Grande.</p>
+            <p className="mt-1 text-xs text-slate-400">Cardápio meramente ilustrativo.</p>
           </div>
         </div>
-        <div className="text-center text-xs opacity-60 pb-5">
-          © {new Date().getFullYear()} Maré Cheia · Feito com 💙 à beira-mar
+
+        <div className="border-t border-white/10 px-4 py-4 text-center text-xs text-slate-400 sm:px-6 lg:px-8">
+          © {new Date().getFullYear()} Maré Cheia. Feito para atender rápido e continuar bonito em qualquer tela.
         </div>
       </footer>
     </div>
